@@ -1,6 +1,25 @@
 import React, { Component, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 
+const BoundaryHOC = ProtectedComponent =>
+  class Boundary extends Component {
+    state = {
+      hasError: false
+    }
+    componentDidCatch = () => {
+      this.setState({
+        hasError: true
+      });
+    };
+
+    render() {
+      const { hasError } = this.state;
+
+      if (hasError) return <ErrorFallBack />
+      else return <ProtectedComponent />
+    }
+  }
+
 class ErrorMaker extends Component {
   state = {
     friends: ["jinsoo", "binary"]
@@ -18,6 +37,8 @@ class ErrorMaker extends Component {
   }
 }
 
+const PErrorMaker =  BoundaryHOC(ErrorMaker);
+
 class Portals extends Component {
   render() {
     return createPortal(
@@ -25,6 +46,8 @@ class Portals extends Component {
     );
   }
 }
+
+const PPortals =  BoundaryHOC(Portals);
 
 const Message = () => "Just touch me";
 
@@ -34,29 +57,22 @@ class ReturnTypes extends Component {
   }
 }
 
+const PReturnTypes =  BoundaryHOC(ReturnTypes);
+
 const ErrorFallBack = () => "something wrong"
 
 class App extends Component {
-  state = {
-    hasError: false
-  };
-  componentDidCatch = (error, info) => {
-    console.log(`error is ${error}, info is ${info}`);
-    this.setState({
-      hasError: true
-    })
-  }
+
   render() {
-    const { hasError } = this.state;
     return (
       <>
-        <ReturnTypes></ReturnTypes>
-        <Portals></Portals>
-        {hasError ? <ErrorFallBack /> : <ErrorMaker />}
+        <PReturnTypes />
+        <PPortals />
+        <PErrorMaker />
       </>
     );
   }
 
 }
 
-export default App;
+export default BoundaryHOC(App);
