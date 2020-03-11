@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from 'react';
+import { createPortal } from 'react-dom';
+
+class Portals extends Component {
+  render() {
+    return createPortal(
+      <Message />, document.getElementById("touchme")
+    );
+  }
+}
+
+const Message = () => "Just touch me";
+
+class ReturnTypes extends Component {
+  render() {
+    return "HI"
+  }
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ReturnTypes></ReturnTypes>
+      <Portals></Portals>
+    </>
   );
 }
 
